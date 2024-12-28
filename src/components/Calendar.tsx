@@ -44,9 +44,7 @@ export function Calendar({ selectedDate, onDateSelect }: CalendarProps) {
         <CalendarIcon className="w-6 h-6 text-indigo-600 mr-2" />
         <h2 className="text-xl font-semibold text-gray-800">Randevu Takvimi</h2>
       </div>
-      <div className="text-center mb-4">
-        <h3 className="text-lg font-medium text-gray-700">{currentMonth}</h3>
-      </div>
+
       <div className="grid grid-cols-7 gap-2">
         {next30Days.slice(0, 7).map((date) => (
           <div key={date.toISOString()} className="text-center font-medium text-gray-600 text-sm py-2">
