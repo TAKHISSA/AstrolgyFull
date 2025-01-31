@@ -19,7 +19,7 @@ export function MonthlyCalendar({ selectedDate, onDateSelect }: CalendarProps) {
   const endDate = endOfMonth(currentMonth);
   const daysInMonth = eachDayOfInterval({ start: startDate, end: endDate });
 
-  // Tarihlerin dolu olup olmadığını kontrol eden fonksiyon
+  // Tarihin dolu olup olmadığını kontrol eden fonksiyon
   const isDateBooked = (date: Date) => {
     return bookedDates.some(
       (bookedDate) => format(bookedDate, 'yyyy-MM-dd') === format(date, 'yyyy-MM-dd')
@@ -35,6 +35,13 @@ export function MonthlyCalendar({ selectedDate, onDateSelect }: CalendarProps) {
   // Tarihlerin seçilebilir olup olmadığını kontrol eden fonksiyon
   const isDateSelectable = (date: Date) => {
     return !isBefore(date, today) && !isDateBooked(date) && !isDisabled(date);
+  };
+
+  // Tarih seçildiğinde kontrol yapan fonksiyon
+  const handleDateSelect = async (date: Date) => {
+    if (isDateSelectable(date)) {
+      onDateSelect(date);
+    }
   };
 
   return (
@@ -85,7 +92,7 @@ export function MonthlyCalendar({ selectedDate, onDateSelect }: CalendarProps) {
           return (
             <button
               key={date.toISOString()}
-              onClick={() => isSelectable && onDateSelect(date)}
+              onClick={() => handleDateSelect(date)}
               disabled={!isSelectable}
               className={`
                 p-2 rounded-lg text-sm relative

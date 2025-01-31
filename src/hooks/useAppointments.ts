@@ -34,9 +34,26 @@ export function useAppointments() {
 
   async function createAppointment(appointmentDate: Date, name: string, email: string) {
     try {
-      // Format the date in YYYY-MM-DD format using the actual selected date
       const formattedDate = format(appointmentDate, 'yyyy-MM-dd');
       
+      // İlk olarak, seçilen tarihte başka randevu var mı kontrol et
+      const { data: existingAppointments, error: checkError } = await supabase
+        .from('appointments')
+        .select('id')
+        .eq('appointment_date', formattedDate)
+        .eq('status', 'scheduled');
+
+      if (checkError) throw checkError;
+
+      // Eğer o tarihte randevu varsa, hata döndür
+      if (existingAppointments && existingAppointments.length > 0) {
+        return {
+          success: false,
+          error: 'Bu tarih için randevu dolu. Lütfen başka bir tarih seçin.'
+        };
+      }
+
+      // Randevu yoksa, yeni randevu oluştur
       const { error } = await supabase
         .from('appointments')
         .insert({
@@ -48,13 +65,13 @@ export function useAppointments() {
 
       if (error) throw error;
 
-      // Refresh the booked dates
+      // Randevu listesini güncelle
       await fetchAppointments();
       return { success: true };
     } catch (err) {
       return { 
         success: false, 
-        error: err instanceof Error ? err.message : 'Failed to create appointment' 
+        error: err instanceof Error ? err.message : 'Randevu oluşturulurken bir hata oluştu' 
       };
     }
   }
